@@ -119,3 +119,6 @@ dist
 
 # nix build output
 result
+
+# emacs markdown-mode preview
+README.html

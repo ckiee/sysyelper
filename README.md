@@ -1,6 +1,9 @@
 # sysyelper
 
-sysyelper is a [Discord](https://discord.com) bot that intergrates with the [PluralKit](https://pluralkit.me) discord bot to automatically suggest switches for our system.
+sysyelper is a [Discord](https://discord.com) bot for my personal server:
+
+- It intergrates with the [PluralKit](https://pluralkit.me) bot to automatically suggest registering switches for our system.
+- It manages ephemeral message access: you can only read message history while chatting. If you only lurk you won't be able to see older messages.
 
 ## Usage
 
