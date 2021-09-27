@@ -29,7 +29,7 @@ export class PluralKitAPI {
         });
     }
 
-    @MemoizeExpiring(1000 * 60)
+    @MemoizeExpiring(900000) // 15 min
     async getMembers(sys: PluralSystem): Promise<SystemMember[]> {
         return await this.getJSON(`/s/${sys.id}/members`);
     }
