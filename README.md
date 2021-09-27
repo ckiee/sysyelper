@@ -4,6 +4,7 @@ sysyelper is a [Discord](https://discord.com) bot for my personal server:
 
 - It intergrates with the [PluralKit](https://pluralkit.me) bot to automatically suggest registering switches for our system.
 - It manages ephemeral message access: you can only read message history while chatting. If you only lurk you won't be able to see older messages.
+  + This is no longer enabled by default, but the code remains.
 
 ## Usage
 
