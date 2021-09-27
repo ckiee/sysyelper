@@ -25,6 +25,8 @@ export default class EphemeralModule extends Module {
 
     @listener({ event: "messageCreate" })
     async memberAdder(msg: Message) {
+        return; // no more ephemeral shenanigans.
+
         this.allowedUsers.set(msg.member!.id, Date.now() + this.TIMEOUT_DUR)
         if (msg.member!.roles.cache.has(this.HISTORY_ROLE_ID)) return;
 
