@@ -18,7 +18,7 @@ export class PluralKitAPI {
     }
 
     private async postJSON(path: string, data: any): Promise<void> {
-        logger.debug(`${path} + ${JSON.stringify(data)}`);
+        logger.info(`${path} + ${JSON.stringify(data)}`);
         await fetch(this.PK_BASE + path, {
             method: "POST",
             body: JSON.stringify(data),
