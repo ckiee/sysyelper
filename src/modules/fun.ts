@@ -8,7 +8,7 @@ import {
 import { PluralKitAPI } from "../pk";
 
 export default class FunModule extends Module {
-    private pk = new PluralKitAPI("fake_token");
+    private pk = new PluralKitAPI();
 
     constructor(client: CookiecordClient) {
         super(client);

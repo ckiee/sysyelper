@@ -1,14 +1,28 @@
 import fetch from "node-fetch";
 import { MemoizeExpiring } from "typescript-memoize";
 import { logger } from "./logger";
-import { UserResolvable, User, Message, GuildMember, ThreadMember } from "discord.js";
+import {
+    UserResolvable,
+    User,
+    Message,
+    GuildMember,
+    ThreadMember,
+} from "discord.js";
 
 export class PluralKitAPI {
     PK_BASE = "https://api.pluralkit.me/v1";
-    constructor(private token: string) { }
+    private headers = {
+        "User-Agent":
+            "sysyelper (https://github.com/ckiee/sysyelper/blob/master/src/pk.ts)",
+        "Content-Type": "application/json",
+        "Authorization": this.token
+    };
+    constructor(private token: string = "") { }
 
     private async getJSON(path: string): Promise<any> {
-        const res = await fetch(this.PK_BASE + path, { headers: { Authorization: this.token } });
+        const res = await fetch(this.PK_BASE + path, {
+            headers: this.headers
+        });
         if (!res.ok) {
             logger.error(`${path} => ${res.status}`);
         }
@@ -22,10 +36,7 @@ export class PluralKitAPI {
         await fetch(this.PK_BASE + path, {
             method: "POST",
             body: JSON.stringify(data),
-            headers: {
-                Authorization: this.token,
-                "Content-Type": "application/json"
-            }
+            headers: this.headers
         });
     }
 
@@ -39,19 +50,22 @@ export class PluralKitAPI {
         return (await this.getJSON(`/s/${sys.id}/fronters`)).members;
     }
 
-    @MemoizeExpiring(3.6e+6) // 1 hour
+    @MemoizeExpiring(3.6e6) // 1 hour
     async getSystemById(id: string): Promise<PluralSystem> {
         return await this.getJSON(`/s/${id}`);
     }
 
-    @MemoizeExpiring(3.6e+6) // 1 hour
+    @MemoizeExpiring(3.6e6) // 1 hour
     async getSystemByUser(resolvable: UserResolvable): Promise<PluralSystem> {
         let id;
 
         if (typeof resolvable == "string") id = resolvable;
-        else if (resolvable instanceof User
-            || resolvable instanceof GuildMember
-            || resolvable instanceof ThreadMember) id = resolvable.id;
+        else if (
+            resolvable instanceof User ||
+            resolvable instanceof GuildMember ||
+            resolvable instanceof ThreadMember
+        )
+            id = resolvable.id;
         else if (resolvable instanceof Message) id = resolvable.author.id;
         else throw new Error("could not resolve UserResolvable");
 
@@ -59,7 +73,7 @@ export class PluralKitAPI {
     }
 
     async postSwitch(members: SystemMember[]) {
-        await this.postJSON("/s/switches", { members: members.map(m => m.id) });
+        await this.postJSON("/s/switches", { members: members.map((m) => m.id) });
     }
 }
 
@@ -71,7 +85,7 @@ export interface SystemMember {
     birthday: string;
     pronouns: string;
     description: string;
-    proxy_tags: { prefix: string, suffix: string }[];
+    proxy_tags: { prefix: string; suffix: string }[];
     keep_proxy: boolean;
     created: string;
     // there are more fields but they seem to be null in the docs
