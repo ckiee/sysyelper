@@ -1,15 +1,19 @@
 import fetch from "node-fetch";
 import { MemoizeExpiring } from "typescript-memoize";
 import { logger } from "./logger";
+import { UserResolvable, User, Message, GuildMember, ThreadMember } from "discord.js";
 
 export class PluralKitAPI {
     PK_BASE = "https://api.pluralkit.me/v1";
-    constructor(private token: string, private system: string) { }
+    constructor(private token: string) { }
 
     private async getJSON(path: string): Promise<any> {
         const res = await fetch(this.PK_BASE + path, { headers: { Authorization: this.token } });
+        if (!res.ok) {
+            logger.error(`${path} => ${res.status}`);
+        }
         const json = await res.json();
-        logger.debug(`${path} => ${JSON.stringify(json)}`);
+        logger.trace(`${path} => ${JSON.stringify(json)}`);
         return json;
     }
 
@@ -26,15 +30,32 @@ export class PluralKitAPI {
     }
 
     @MemoizeExpiring(1000 * 60)
-    async getMembers(): Promise<SystemMember[]> {
-        const json = await this.getJSON(`/s/${this.system}/members`);
-        return json;
+    async getMembers(sys: PluralSystem): Promise<SystemMember[]> {
+        return await this.getJSON(`/s/${sys.id}/members`);
     }
 
     @MemoizeExpiring(500)
-    async getFronters(): Promise<SystemMember[]> {
-        const json = await this.getJSON(`/s/${this.system}/fronters`);
-        return json.members;
+    async getFronters(sys: PluralSystem): Promise<SystemMember[]> {
+        return (await this.getJSON(`/s/${sys.id}/fronters`)).members;
+    }
+
+    @MemoizeExpiring(3.6e+6) // 1 hour
+    async getSystemById(id: string): Promise<PluralSystem> {
+        return await this.getJSON(`/s/${id}`);
+    }
+
+    @MemoizeExpiring(3.6e+6) // 1 hour
+    async getSystemByUser(resolvable: UserResolvable): Promise<PluralSystem> {
+        let id;
+
+        if (typeof resolvable == "string") id = resolvable;
+        else if (resolvable instanceof User
+            || resolvable instanceof GuildMember
+            || resolvable instanceof ThreadMember) id = resolvable.id;
+        else if (resolvable instanceof Message) id = resolvable.author.id;
+        else throw new Error("could not resolve UserResolvable");
+
+        return await this.getJSON(`/a/${id}`);
     }
 
     async postSwitch(members: SystemMember[]) {
@@ -55,4 +76,15 @@ export interface SystemMember {
     created: string;
     // there are more fields but they seem to be null in the docs
     // so we're ignoring them.
+}
+
+export interface PluralSystem {
+    id: string;
+    name: string;
+    description: string;
+    tag: string;
+    avatar_uri: string;
+    tz: string;
+    created: string;
+    // null fields omitted
 }

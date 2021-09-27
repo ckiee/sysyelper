@@ -4,14 +4,16 @@ import { PluralKitAPI, SystemMember } from "../pk";
 import { logger } from "../logger";
 
 export default class ProxyManager extends Module {
-    private pk = new PluralKitAPI(process.env.PK_TOKEN!, process.env.PK_SYSTEM!);
+    private pk = new PluralKitAPI(process.env.PK_TOKEN!);
+    private PK_SYSTEM_ID = process.env.PK_SYSTEM!;
 
     constructor(client: CookiecordClient) {
         super(client);
     }
 
     async findProxyTag(content: string): Promise<SystemMember | undefined> {
-        const members = await this.pk.getMembers();
+        const sys = await this.pk.getSystemById(this.PK_SYSTEM_ID);
+        const members = await this.pk.getMembers(sys);
         return members.filter(m => content.includes(m.description))[0];
     }
 
@@ -20,7 +22,8 @@ export default class ProxyManager extends Module {
         if (!this.client.botAdmins.includes(msg.author.id)) return;
         const newMember = await this.findProxyTag(msg.content);
         if (!newMember) return;
-        const front = await this.pk.getFronters()
+        const sys = await this.pk.getSystemById(this.PK_SYSTEM_ID);
+        const front = await this.pk.getFronters(sys);
         if (front.map(m => m.id).includes(newMember.id)) return logger.debug("already in front, skipping");
         const newFront = [...front, newMember];
 
