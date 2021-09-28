@@ -5,6 +5,8 @@
     "main": "dist/index.js",
     "bin": "dist/index.js",
     "dependencies": {
+        "@types/cheerio": "^0.22.30",
+        "cheerio": "^1.0.0-rc.10",
         "cookiecord": "^0.7.18",
         "dotenv-safe": "^8.2.0",
         "node-fetch": "^2.6.1",
