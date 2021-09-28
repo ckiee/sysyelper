@@ -1,6 +1,7 @@
 import CookiecordClient, { HelpModule } from "cookiecord";
 import { Intents } from "discord.js";
 import dotenv from "dotenv-safe";
+import AdminModule from "./modules/admin";
 import ComicPoller from "./modules/comic";
 import FunModule from "./modules/fun";
 import ProxyManager from "./modules/proxy";
@@ -30,6 +31,7 @@ client.registerModule(HelpModule);
 client.registerModule(ProxyManager);
 client.registerModule(FunModule);
 client.registerModule(ComicPoller);
+client.registerModule(AdminModule);
 // client.registerModule(EphemeralModule);
 
 client.login(process.env.TOKEN);
