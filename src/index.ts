@@ -4,6 +4,8 @@ import dotenv from "dotenv-safe";
 import FunModule from "./modules/fun";
 import ProxyManager from "./modules/proxy";
 
+import "./store.ts"; // for side effects
+
 dotenv.config();
 
 const client = new CookiecordClient(
