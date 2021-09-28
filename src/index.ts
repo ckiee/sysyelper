@@ -6,7 +6,7 @@ import ComicPoller from "./modules/comic";
 import FunModule from "./modules/fun";
 import ProxyManager from "./modules/proxy";
 
-import "./store.ts"; // for side effects
+import "./store"; // for side effects
 
 dotenv.config();
 
