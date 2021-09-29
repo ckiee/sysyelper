@@ -65,6 +65,7 @@ export default class ComicPoller extends Module {
                     content: process.env.COMIC_EXTRA_CONTENT!,
                     embeds: [embed],
                 });
+                comic.maxPageId = lastPageId;
             }
         }
     }
