@@ -85,7 +85,7 @@ export const fetchers = {
             });
 
             const bannerURL = $(".detail_header > .thmb > img").attr("src");
-            const title = $("._challengeTitle").text().trim();
+            const title = $(".detail_header .info .subj").text().trim();
 
             if (!bannerURL || !title)
                 throw new Error("Failed to parse archive page meta");
