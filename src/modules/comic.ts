@@ -44,10 +44,9 @@ export default class ComicPoller extends Module {
             const comic = this.data.comics[key];
             logger.trace(`now polling ${key} with ${comic.source}`);
             const meta = await fetchers[comic.source](new URL(comic.url))();
-            const lastPageId = meta.pages.length - 1;
+            const latest = meta.pages[meta.pages.length - 1];
 
-            if (comic.maxPageId < lastPageId) {
-                const latest = meta.pages[meta.pages.length - 1];
+            if (comic.maxPageId < latest.id) {
                 const embed = new MessageEmbed();
                 embed.setAuthor(meta.title, undefined, latest.url);
                 embed.setImage(meta.bannerURL);
@@ -65,7 +64,7 @@ export default class ComicPoller extends Module {
                     content: process.env.COMIC_EXTRA_CONTENT!,
                     embeds: [embed],
                 });
-                comic.maxPageId = lastPageId;
+                comic.maxPageId = latest.id;
             }
         }
     }

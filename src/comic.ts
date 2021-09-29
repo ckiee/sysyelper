@@ -9,6 +9,7 @@ export type ComicFetcher = (_: URL) => () => Promise<ComicMetadata>;
 interface ComicPage {
     title: string;
     url: string;
+    id: number;
 }
 interface ComicMetadata {
     title: string;
@@ -29,7 +30,7 @@ export const fetchers = {
             const res = await fetch(url);
             const html = await res.text();
             const $ = load(html);
-            let pages: { id: number, title: string, url: string }[] = [];
+            let pages: ComicPage[] = [];
 
             $(".archivecomic > a").each((_, e) => {
                 const url = new URL(comicUrl.toString());
@@ -67,11 +68,14 @@ export const fetchers = {
             logger.trace(`GET ${url}`);
             const res = await fetch(url, {
                 headers: {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0",
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/;q=0.8",
+                    "User-Agent":
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0",
+                    Accept:
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/;q=0.8",
                     "Accept-Language": "en-US,en;q=0.5",
-                    "Cookie": "locale=en; timezoneOffset=+2; pagGDPR=true; atGDPR=AD_CONSENT; rw=c_349416_6; needGDPR=true; needCCPA=false; needCOPPA=false; countryCode=AT; tpamGDPR=; tpaaGDPR="
-                }
+                    Cookie:
+                        "locale=en; timezoneOffset=+2; pagGDPR=true; atGDPR=AD_CONSENT; rw=c_349416_6; needGDPR=true; needCCPA=false; needCOPPA=false; countryCode=AT; tpamGDPR=; tpaaGDPR=",
+                },
             });
             const html = await res.text();
             const $ = load(html);
@@ -81,7 +85,12 @@ export const fetchers = {
                 const url = $(e).attr("href");
                 if (!url || url.trim() == "") return;
                 const title = $(e).children(".subj").text();
-                pages.push({ url, title });
+                const parsedURL = new URL(url);
+                pages.push({
+                    url,
+                    title,
+                    id: parseInt(parsedURL.searchParams.get("episode_no") || "", 10),
+                });
             });
 
             const bannerURL = $(".detail_header > .thmb > img").attr("src");
