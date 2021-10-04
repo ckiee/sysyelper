@@ -79,7 +79,7 @@ export const fetchers = {
             });
             const html = await res.text();
             const $ = load(html);
-            const pages: ComicPage[] = [];
+            let pages: ComicPage[] = [];
 
             $("#_listUl > li > a").each((_, e) => {
                 const url = $(e).attr("href");
@@ -92,6 +92,8 @@ export const fetchers = {
                     id: parseInt(parsedURL.searchParams.get("episode_no") || "", 10),
                 });
             });
+
+            pages = pages.sort((a, b) => a.id - b.id);
 
             const bannerURL = $(".detail_header > .thmb > img").attr("src");
             const title = $(".detail_header .info .subj").text().trim();
