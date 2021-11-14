@@ -1,4 +1,8 @@
-# sysyelper
+# sysyelper is now a part of daiko.
+
+I realized it'd be more convenient to have [a monolith](https://github.com/ckiee/daiko).
+
+**(Original README contents ahead)**
 
 sysyelper is a [Discord](https://discord.com) bot for my personal server:
 
